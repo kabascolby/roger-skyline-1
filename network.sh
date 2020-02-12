@@ -2,7 +2,7 @@
 
 #saving the default Gateway address
 GW=$(sudo ip route show | grep default | awk '{ print $3}') && \
-NI=$(sudo ip route show | grep –m1 default | awk '{print $5}') && \ 
+NI=$(sudo arp –n | grep ether | awk '{print $5}') && \ 
 #updating the network interface address
 sudo echo "# The primary network interface\n
 auto $NI \n
