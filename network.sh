@@ -9,10 +9,12 @@ sudo ip address flush $NI && \
 sudo systemctl stop NetworkManager.service && \
 sudo systemctl disable NetworkManager.service  && \
 
-sudo echo "#The primary network interface
+sudo echo "
+#The primary network interface
 allow-hotplug $NI
 iface $NI inet static
-	address 192.168.1.2
+	address 192.168.252
 	netmask 255.255.255.252
 	gateway $GW">> /etc/network/interfaces && \
-sudo service networking restart
+sudo service networking restart && \
+sudo ifup $NI
