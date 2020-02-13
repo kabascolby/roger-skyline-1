@@ -2,7 +2,7 @@
 
 #saving the default Gateway address
 GW=$(sudo ip route show | grep default | awk '{ print $3}') && \
-NI=$(sudo arp –n | grep ether | awk '{print $5}') && \
+NI=$(sudo arp | grep ether | awk '{print $5}') && \
 #remove all the address 
 sudo ip address flush $NI && \
 #stoping and disable the network daemon the services
