@@ -13,7 +13,7 @@ sudo echo "
 #The primary network interface
 allow-hotplug $NI
 iface $NI inet static
-	address 192.168.252
+	address 192.168.252.2
 	netmask 255.255.255.252
 	gateway $GW">> /etc/network/interfaces && \
 sudo service networking restart && \
