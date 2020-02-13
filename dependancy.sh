@@ -17,9 +17,10 @@ apt install net-tools && \
 #saving the default Gateway address
 GW=$(sudo ip route show | grep default | awk '{ print $3}') && \
 NI=$(sudo ip route show | grep –m1 default | awk '{print $5}') && \ 
-#updating the network interface address
-sudo echo "auto $NI \
-  iface $NI inet static\
+
+# The primary network interface
+allow-hotplug eth0
+iface eth0 inet static
   address 192.168.1.2\
   netmask 255.255.255.252\
   gateway $GW\

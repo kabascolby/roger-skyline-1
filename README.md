@@ -77,26 +77,6 @@ Explain what these tests test and why
 
 ### Bonuses
 
-- Raw mode also called Non Canonical mode.
-- Auto completion (with tab keypad).
-- Cursor Mouvement and line edition feature.
-  - Cursor positionning (keypad Left and Right);
-  - History (keypad Up and Down).
-- Signal management:
-  - `Ctrl + C`;
-  - `Ctrl + Z` (I turned it off. Will be updated in 21sh);
-  - `Ctrl + D`.
-- User right execution management (error handling).
-- Multiple commands (semi colons).
-- Custom Prompt:
-  - Display current directory name;
-  - Changing prompt color depending on the exit Status.
-- Some specials characteres handling (with `$`, `$$`, and `#`...)
-  - Single quotes or strong quotes keep the string unchanged
-  - Double quotes expand the string based on the value of `$variable` and `$$`
-- Hash `#` (comment inside the terminal)
-- etc;
-
 ```
 Give an example
 ```
