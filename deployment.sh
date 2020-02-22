@@ -16,7 +16,7 @@ sudo chmod -R 755 /var/www/$NAME && \
 sudo cp -rf index.html /var/www/$NAME/html/ && \
 
 #Updating the the Hostfile
-sudo echo "$IP   debian $NAME" | sudo tee -a /etc/hosts && \
+#sudo echo "$IP   debian $NAME" | sudo tee -a /etc/hosts && \
 
 #Create a virtual host file 
 sudo echo "
@@ -25,7 +25,7 @@ sudo echo "
     ServerName "www.$NAME"
     ServerAlias $NAME
     DocumentRoot /var/www/$NAME/html
-	Redirect / https://$NAME
+	Redirect "/" "https://$IP/"
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>" > /etc/apache2/sites-available/$NAME.conf && \

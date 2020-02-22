@@ -62,34 +62,6 @@ sudo sh dependancy.sh
 Based on the restrictions to implement this project
 and the coding style imposed by 42.
 
-### Mandatory
-
-the instruction was to implement a serie's of builtins commands
-with their basic functionality also to be able to run some
-externals commands(with binary files) specified in the PATH environement.
-
-- Builtins commands: echo, cd, setenv, unsetenv, env, exit
-
-```
-Give an example
-```
-
-Explain what these tests test and why
-
-### Bonuses
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
 ## Deployment
 
 Add additional notes about how to deploy this on a live system
