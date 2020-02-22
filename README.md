@@ -53,7 +53,8 @@ I created a script to install and update all the dependencies needed for
 the project by running the following
 
 ```bash
-git clone https://github.com/kabascolby/Minishell.git
+cd roger-skyline-1
+sudo sh dependancy.sh
 ```
 
 ## Implementions
