@@ -30,7 +30,7 @@ Virtual Box, Hyper-v, VMWare...
 Download a Linux OS image of your choice and install it in your hypervisor.
 (Debian, Jessie, CentOS 7...)
 
-### Implementation
+## Implementation
 
 This project in my case will be implemented with Debian 9 some command might
 be slightly different based on the linux version you choose.
@@ -43,35 +43,35 @@ if you are in graphical mode open a terminal.
 
 1. You have to login as root with a command `su` and insert your `password`
 
-```bash
-su
-```
+   ```bash
+   su
+   ```
 
-2.Create a new user account add to a sudoer groups and change current user<br>
-to the new user
-avoid running code as a root it's a very bad practice
+2. Create a new user account add to a sudoer groups and change current user
+   to the new use.r<br>
+   avoid running command with root accoutn it's a very bad practice
 
-```bash
-adduser "Your username"
-usermod -aG sudo "Your username"
-su - "username"
-```
+   ```bash
+   adduser "Your username"
+   usermod -aG sudo "Your username"
+   su - "username"
+   ```
 
 3. Pull the script folder from my repo<br>
    I try to comments most part of the scripts
    change the execution permission to the scripts
 
-```bash
-sudo apt-get update
-sudo apt-get install git
-git clone https://github.com/kabascolby/roger-skyline-1.git
-cd roger-skyline-1
-chmod +x *.sh
-```
+   ```bash
+   sudo apt-get update
+   sudo apt-get install git
+   git clone https://github.com/kabascolby/roger-skyline-1.git
+   cd roger-skyline-1
+   chmod +x *.sh
+   ```
 
 Some implementation might not be a standard because the requirements
 from subject for more details:
-To make the documentation easy to read, I created some scripts files.
+To make the documentation more readable, I wrote some scripts.
 all the implementation details are inside those scripts.
 
 ### Install all the dependancy
@@ -82,9 +82,7 @@ sudo sh dependancy.sh
 
 ### Network interface
 
-We have to:
-
-1. Calculate the Netmask base on Classless inter-domain routing (CIDR) 30<br>
+1. Calculate the Netmask base on Classless inter-domain routing (CIDR) `30`<br>
    the mask will be: 255.255.255.252/30 and default mask will be 255.255.255.0
 2. Calculate the static ip address based on the netmask <br>
    based on my calulation only two Ip addresses can be used unless you configure
@@ -94,9 +92,8 @@ We have to:
    and also test how robust is my firewall :)
 4. Edit the newtowk interface file `/etc/network/interfaces`<br>
 
-- Set the ip and the mask manually
-  To edit the network interface I created a script in my repos `network.sh`
-  `this file has to be executed only once`.
+> Set the ip and the mask manually
+> To edit the network interface I created a script in my repos `network.sh` > `this file has to be executed only once`.
 
 ```bash
 sudo sh network.sh
@@ -126,57 +123,129 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         RX errors 0  dropped 0  overruns 0  frame 0
 ```
 
-### iptables configuration
+### **Setup SSH**
 
-I choose to use iptable
-extra
-sudo cp -f firewall /etc/init.d/
-update-rc.d
+1. First Generate a public/private rsa key pair, on the host machine.
 
-### fail2Ban
+   ```bash
+   ssh-keygen -t rsa
+   ```
 
-Setup Denial Of Service Attack with fail2ban
+   This command will generate the private key file and the public key file
 
-```bash
-sudo vim etc/fail2ban/jail.conf.local
-```
+   - Id_rsa: which is the file who contains the private key
+   - Id_rsa.pub: which is the public key to send to the ssh server
 
-```console
-[sshd]
-enabled = true
-port    = 42
-logpath = %(sshd_log)s
-backend = %(sshd_backend)s
-maxretry = 3
-bantime = 600
+2. Copy the SSH public key from the host machine to the server
 
-#Add after HTTP servers:
-[http-get-dos]
-enabled = true
-port = http,https
-filter = http-get-dos
-logpath = /var/log/apache2/access.log
-maxretry = 300
-findtime = 300
-bantime = 600
-action = iptables[name=HTTP, port=http, protocol=tcp]
-```
+   ```bash
+   ssh-copy-id -i id_rsa.pub lamine@10.113.100.13 -p 1450
+   ```
 
-Add http-get-dos filter
+   Enter the user pasword<br>
+   The key is automatically added in `~/.ssh/authorized_keys` on the server
 
-```bash
-sudo cat /etc/fail2ban/filter.d/http-get-dos.conf
-```
+   > If you no longer want to have type the key password you can setup a SSH Agent with `ssh-add`
 
-Output:
+3. Edit the `sshd_config` file `/etc/ssh/sshd.config` to remove root login permit, password authentification
 
-```console
-[Definition]
-failregex = ^<HOST> -.*"(GET|POST).*
-ignoreregex =
-```
+   ```bash
+   sudo vim /etc/ssh/sshd.conf
+   ```
 
-### Protection against port scans
+   > Remove **#** at the beginning of each line
+
+   - Edit line 32 like: `PermitRootLogin no`
+   - Edit line 56 like `PasswordAuthentication no`
+
+4. We need to restart the SSH daemon service.
+
+   ```bash
+   sudo service sshd restart
+   ```
+
+### **iptables configuration**
+
+I choose to use iptable intead of using ufw for this subject.It's better to understand iptables it's
+will be usefull in the next project and the requirement for this project is pretty basic there is ton's of tutorials
+on youtube who can help to make your hands dirty with iptables and it's worthed.
+I've explain each line in the `firewall.sh` script.
+
+1. remove all the firewall rules
+2. Setup firewall rules
+
+   > Don't forget to update the SSH port Number in the script in case you choose another port number
+
+   ```bash
+   sudo cp firewall.sh /etc/init.d/
+   update-rc.d firewall.sh defaults
+   ```
+
+#### **Test**
+
+### **Setup fail2Ban**
+
+Setup Denial Of Service Attack with fail2ban.
+
+1. Create a copy of the file `jail.conf` and rename it `jail.conf.local`. <br>
+   This will make the ban rules persistent even when the package will be updated
+   it will read by default the `jail.conf.local` file.
+
+   ```bash
+   sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.conf.local
+   sudo vim /etc/fail2ban/jail.conf.local
+   ```
+
+2. Edit all the line bellow to set to protect against
+
+   - SSH ddos: this will prevent an attacker to bloc all the users to acces the server through ssh
+   - Apache website admin attack: this will preventent a hacker to sniff the website in purpose to find the admin page
+   - http-get-dos prevention: Denial of service attacks are meant to load a server to a level where it can't serve the intended users with the service.
+
+   ```console
+   #SSH servers
+   [sshd]
+   enabled = true
+   port    = 1450
+   logpath = %(sshd_log)s
+   backend = %(sshd_backend)s
+   maxretry = 3
+   bantime = 600
+
+   #Add after HTTP servers:
+   [apache-404]
+   enabled = true
+   port = http
+   filter = apache-404
+   logpath = /var/log/apache*/error*.log
+   maxretry = 5
+   bantime = 600
+
+   [http-get-dos]
+   enabled = true
+   port = http,https
+   filter = http-get-dos
+   logpath = /var/log/apache2/access.log
+   maxretry = 300
+   findtime = 300
+   bantime = 600
+   action = iptables[name=HTTP, port=http, protocol=tcp]
+
+   #ACTIONS
+   destemail = kabascolby@gmail.com
+   sendername = Fail2BanAlerts
+   ```
+
+3. Set the filter
+
+   the scripts bellow will create a \*.conf files wich will be used to check when a hacker try to compromise the server
+
+   ```bash
+   sudo sh http-get-dos.sh
+   sudo sh apache-404.sh
+   ```
+
+### **Protection against port scans**
 
 1. Config portsentry
 
@@ -223,7 +292,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Authors
 
-- **Lamine kaba** - _Initial work_ - [kabascolby](https://github.com/kabascolby)
+- **Lamine kaba** - _Initial works_ - [kabascolby](https://github.com/kabascolby)
 
 ## License
 

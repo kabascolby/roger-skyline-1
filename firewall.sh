@@ -34,9 +34,9 @@ iptables -A LKABA-FIREWALL -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 # Autorize loopback # Set access for localhost
 iptables -A LKABA-FIREWALL -i lo -j ACCEPT
-echo "localhost com set"
+echo "localhost communication set"
 
-# Set ICMP protocol for ping
+# Block ping
 iptables -t filter -A INPUT -p icmp -j DROP
 iptables -t filter -A OUTPUT -p icmp -j DROP
 #echo "ping disabled"

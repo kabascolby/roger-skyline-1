@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Boot to non Graphical user  NOn-GUI
+#Remove graphical User interface and boot directly to the shell
 systemctl set-default multi-user.target && \
 
 #update packages
