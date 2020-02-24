@@ -3,14 +3,14 @@
 #Boot to non Graphical user  NOn-GUI
 systemctl set-default multi-user.target && \
 
-#add Current user to sudoer group
-usermod -aG sudo $USER && \
-
 #update packages
-apt Update
+apt-get update -y && apt-get upgrade -y
 
-#install dns-utils
-apt install dnsutils && \
+# Project dependancy
+sudo apt-get install vim portsentry fail2ban apache2 mailutils -y
+
+#install dns-utils like ifconfig
+sudo apt-get install dnsutils && \
 
 #install network utils
-apt install net-tools
+apt-get install net-tools
