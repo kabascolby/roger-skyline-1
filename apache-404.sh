@@ -20,4 +20,4 @@ failregex = [[]client []] File does not exist: .*
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
 # Values: TEXT
 #
-ignoreregex =" > etc/fail2ban/filter.d/apache-404.conf
+ignoreregex =" > /etc/fail2ban/filter.d/apache-404.conf

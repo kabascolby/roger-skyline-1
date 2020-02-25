@@ -174,11 +174,11 @@ I've explain each line in the `firewall.sh` script.
 1. remove all the firewall rules
 2. Setup firewall rules
 
-   > Don't forget to update the SSH port Number in the script in case you choose another port number
+   > Don't forget to update the SSH port Number in the script `firewall.sh` in case you choose another port number
 
    ```bash
-   sudo cp firewall.sh  /etc/init.d/firewall
-   sudo update-rc.d firewall defaults
+   sudo bash firewall.sh
+   sudo apt-get install iptables-persistent -y
    ```
 
 #### **Test**
@@ -243,6 +243,13 @@ Setup Denial Of Service Attack with fail2ban.
    ```bash
    sudo sh http-get-dos.sh
    sudo sh apache-404.sh
+   ```
+
+4. Restart firewall and fail2ban
+
+   ```bash
+   sudo ufw reload
+   sudo service fail2ban restart
    ```
 
 ### **Protection against port scans**
