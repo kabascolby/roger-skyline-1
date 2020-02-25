@@ -279,7 +279,6 @@ ignoreregex =
 5. Finally we need to reload our firewall and fail2ban
 
 ```bash
-sudo ufw reload
 sudo service fail2ban restart
 ```
 

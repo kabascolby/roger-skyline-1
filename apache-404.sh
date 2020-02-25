@@ -2,7 +2,7 @@
 
 sudo echo "# Fail2Ban configuration file
 #
-# Author: Cyril Jaquier
+# Author: lamine kaba
 #
 #
 
@@ -14,10 +14,10 @@ sudo echo "# Fail2Ban configuration file
 # be used for standard IP/hostname matching.
 # Values: TEXT
 # [client x.x.x.x] File does not exist: /home/www/admin/admin,
-failregex = [[]client []] File does not exist: .*
+failregex = ^<HOST> - .* "(GET|POST|HEAD).*HTTP.*" 404 .*$
 #
 # Option: ignoreregex
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
 # Values: TEXT
 #
-ignoreregex =" > /etc/fail2ban/filter.d/apache-404.conf
+ignoreregex =.*(robots.txt|favicon.ico|jpg|png)" > /etc/fail2ban/filter.d/apache-404.conf

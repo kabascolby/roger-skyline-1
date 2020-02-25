@@ -192,8 +192,8 @@ Setup Denial Of Service Attack with fail2ban.
    it will read by default the `jail.conf.local` file.
 
    ```bash
-   sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.conf.local
-   sudo vim /etc/fail2ban/jail.conf.local
+   sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+   sudo vim /etc/fail2ban/jail.local
    ```
 
 2. Edit all the line bellow to set to protect against
@@ -213,6 +213,15 @@ Setup Denial Of Service Attack with fail2ban.
    bantime = 600
 
    #Add after HTTP servers:
+
+   [apache]
+   enabled  = true
+   port     = http,https
+   filter   = apache-auth
+   logpath  = /var/log/apache/custom_log_location.log
+   maxretry = 3
+   findtime = 600
+
    [apache-404]
    enabled = true
    port = http
