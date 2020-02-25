@@ -177,8 +177,8 @@ I've explain each line in the `firewall.sh` script.
    > Don't forget to update the SSH port Number in the script in case you choose another port number
 
    ```bash
-   sudo cp firewall.sh /etc/init.d/
-   update-rc.d firewall.sh defaults
+   sudo cp firewall.sh  /etc/init.d/firewall
+   sudo update-rc.d firewall defaults
    ```
 
 #### **Test**

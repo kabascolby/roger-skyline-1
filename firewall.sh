@@ -55,4 +55,4 @@ echo "http/https port open"
 iptables -A LKABA-FIREWALL -j REJECT --reject-with icmp-host-prohibited
 
 # Save settings
-/sbin/iptables-save
+sudo iptables-save | sudo tee /etc/iptables.conf
