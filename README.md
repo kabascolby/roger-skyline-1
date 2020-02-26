@@ -261,6 +261,19 @@ Setup Denial Of Service Attack with fail2ban.
    sudo service fail2ban restart
    ```
 
+#### **Test**
+
+```bash
+sudo fail2ban-client status
+sudo fail2ban-client set sshd unbanip 10.113.100.82
+```
+
+```console
+Status
+- Number of jail:	4
+- Jail list:	apache, apache-404, http-get-dos, sshd
+```
+
 ### **Protection against port scans**
 
 1. Config portsentry
