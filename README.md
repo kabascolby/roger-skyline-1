@@ -107,20 +107,20 @@ sudo ip address
 
 ```console
 enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 10.113.100.13  netmask 255.255.255.252  broadcast 10.113.100.15
-        inet6 fe80::a00:27ff:fe77:e815  prefixlen 64  scopeid 0x20<link>
-        ether 08:00:27:77:e8:15  txqueuelen 1000  (Ethernet)
-        RX packets 3099  bytes 566864 (553.5 KiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 1078  bytes 153983 (150.3 KiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+				inet 10.113.100.13  netmask 255.255.255.252  broadcast 10.113.100.15
+				inet6 fe80::a00:27ff:fe77:e815  prefixlen 64  scopeid 0x20<link>
+				ether 08:00:27:77:e8:15  txqueuelen 1000  (Ethernet)
+				RX packets 3099  bytes 566864 (553.5 KiB)
+				RX errors 0  dropped 0  overruns 0  frame 0
+				TX packets 1078  bytes 153983 (150.3 KiB)
+				TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
 lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  netmask 255.0.0.0
-        inet6 ::1  prefixlen 128  scopeid 0x10<host>
-        loop  txqueuelen 1000  (Local Loopback)
-        RX packets 2  bytes 78 (78.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
+				inet 127.0.0.1  netmask 255.0.0.0
+				inet6 ::1  prefixlen 128  scopeid 0x10<host>
+				loop  txqueuelen 1000  (Local Loopback)
+				RX packets 2  bytes 78 (78.0 B)
+				RX errors 0  dropped 0  overruns 0  frame 0
 ```
 
 ### **Setup SSH**
@@ -169,7 +169,7 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 I choose to use iptable intead of using ufw for this subject.It's better to understand iptables it's
 will be usefull in the next project and the requirement for this project is pretty basic there is ton's of tutorials
 on youtube who can help to make your hands dirty with iptables and it's worthed.
-I've explain each line in the `firewall.sh` script.
+I explained each line in the `firewall.sh` script.
 
 1. remove all the firewall rules
 2. Setup firewall rules
@@ -224,9 +224,9 @@ Setup Denial Of Service Attack with fail2ban.
 
    [apache-404]
    enabled = true
-   port = http
+   port = http,https
    filter = apache-404
-   logpath = /var/log/apache*/error*.log
+   logpath = /var/log/apache*/access.log
    maxretry = 5
    bantime = 600
 
@@ -261,12 +261,12 @@ Setup Denial Of Service Attack with fail2ban.
    sudo service fail2ban restart
    ```
 
-#### **Test**
+5. **Test**
 
-```bash
-sudo fail2ban-client status
-sudo fail2ban-client set sshd unbanip 10.113.100.82
-```
+  ```bash
+  sudo fail2ban-client status
+  sudo fail2ban-client set sshd unbanip 10.113.100.82
+  ```
 
 ```console
 Status
@@ -278,38 +278,98 @@ Status
 
 1. Config portsentry
 
-First, we have to edit the `/etc/default/portsentry` file
+   > Stop the portsentry services
 
-```console
-TCP_MODE="atcp"
-UDP_MODE="audp"
-```
+     ```bash
+     sudo /etc/init.d/portsentry stop
+     ```
 
-After, edit the file `/etc/portsentry/portsentry.conf`
+   - Advanced Stealth:???This mode offers the same detection method as the regular stealth mode, but instead of monitoring only the selected ports, it monitors all ports below a selected number (port number 1023, by default). You can then exclude monitoring of particular ports. This mode is even more sensitive than Stealth mode and is, therefore, more likely to cause false alarms than regular stealth mode.
 
-```console
-BLOCK_UDP="1"
-BLOCK_TCP="1"
-```
+   > Edit the `/etc/default/portsentry` to use portsentry in advanced mode for the TCP and UDP protocols.
 
-Comment the current KILL_ROUTE and uncomment the following one:
+    ```console
+    TCP_MODE="atcp"
+    UDP_MODE="audp"
+    ```
 
-```console
-KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
-```
+   - A value of "1" causes the KILL_ROUTE and KILL_HOSTS_DENY options to be run
 
-Comment the following line:
+   > After, edit the file `/etc/portsentry/portsentry.conf`<br>
 
-```console
-KILL_HOSTS_DENY="ALL: $TARGET$ : DENY
-```
+    ```console
+    BLOCK_UDP="1"
+    BLOCK_TCP="1"
+    ```
 
-2. We can now restart the service to make changes effectives
+   - **KILL_ROUTE**:???This option runs the /sbin/route command to reroute requests from the remote computer to a dead host.<br>
+   This ipchains rule would deny (in other words, drop) all packets from the remote computer.
+
+    > We opt for a blocking of malicious persons through iptables. We will therefore comment on all lines of the configuration file that begin with KILL_ROUTE except the next:
+
+    ```console
+    KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
+    ```
+
+   - KILL_HOSTS_DENY: This option is used to deny requests for any network services that are protected by TCP wrappers.
+
+    > Comment the following line:
+
+    ```console
+    KILL_HOSTS_DENY="ALL: $TARGET$ : DENY
+    ```
+
+2. Restart the service to make changes effectives
+
+   ```bash
+   sudo service portsentry restart
+   ```
+
+3. ***Test***
+
+- Use another computer inside the same network to scan all the ports with the server IP
+
+   ```bash
+   sudo nmap -sS -O
+   ```
+
+### Package update and Monitor Crontab Changes
+
+1. Run the `monitoring` script to create the files
+
+	```console
+	sudo cp monitoring.sh ~/monitoring.sh
+	sudo cp update.sh  ~/update.sh
+	```
+
+2. Add the task to cron
+
+	```bash
+	crontab -e
+	```
+
+3. Write in the openned file thoses lines
+
+	```bash
+	SHELL=/bin/bash
+	PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+	@reboot sudo ~/update.sh
+	0 4 * * 6 sudo ~/update.sh
+	0 0 * * * sudo ~/monitoring.sh
+	```
+
+4. Make sure we have correct rights
 
 ```bash
-sudo service portsentry restart
+sudo chown $USER /var/mail/$USER
 ```
 
+5. make sure cron service is enable
+
+```bash
+sudo systemctl enable cron
+```
 ## Deployment
 
 Add additional notes about how to deploy this on a live system
