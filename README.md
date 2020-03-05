@@ -274,6 +274,12 @@ Status
 - Jail list:	apache, apache-404, http-get-dos, sshd
 ```
 
+## Stop the services
+
+	```bash
+	sudo sh service_disable.sh
+	```
+
 ### **Protection against port scans**
 
 1. Config portsentry
@@ -370,6 +376,22 @@ sudo chown $USER /var/mail/$USER
 ```bash
 sudo systemctl enable cron
 ```
+
+### Configure SSL Certificates
+
+1. Run the script ssl_cert.sh
+
+ ```bash
+ sudo bash ssl_cert.sh
+ ```
+
+2. You see the details of your certificate
+
+ ```bash
+ sudo openssl x509 -in /etc/ssl/certs/$NAME.crt -text | less
+ ```
+
+
 ## Deployment
 
 Add additional notes about how to deploy this on a live system

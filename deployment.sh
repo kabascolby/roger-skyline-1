@@ -22,10 +22,10 @@ sudo cp -rf index.html /var/www/$NAME/html/ && \
 sudo echo "
 <VirtualHost *:80>
     ServerAdmin $EMAIL
-    ServerName "www.$NAME"
+    ServerName www.$NAME
     ServerAlias $NAME
     DocumentRoot /var/www/$NAME/html
-	Redirect "/" "https://$IP/"
+	Redirect \"/\" \"https://$IP\"
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>" > /etc/apache2/sites-available/$NAME.conf && \
@@ -33,7 +33,7 @@ sudo echo "
 #Enable the configuration file with the a2ensite tool
 sudo a2ensite $NAME.conf && \
 
-#Disable the default site defined in 000-default.conf
+#Disable the default site configuration
 sudo a2dissite 000-default.conf
 
 #Test for configuration errors
